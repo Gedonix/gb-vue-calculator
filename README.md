@@ -1,4 +1,4 @@
-# vue-gb
+# GB Project Vue Calculator
 
 ## Project setup
 ```
