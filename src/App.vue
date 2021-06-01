@@ -1,26 +1,88 @@
-<template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+<template> 
+    <div class="container">
+      <input class="input" type="number" v-model="operator1">
+      <Button @calculate="action = $event" @clean="cleanHandler"/>
+      <input class="input" type="number" v-model="operator2">
+      <Result :result="result" />      
+    </div>    
+    <Numkeypad @ekeypad="ekpInput" @toggleHandle="toggle = $event"/>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Button from './components/Button.vue'
+import Result from './components/Result.vue'
+import Numkeypad from './components/NumKeypad.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    Button,
+    Result,
+    Numkeypad
+  },
+  data() {
+    return {      
+      action: '0',
+      operator1: '',
+      operator2: '', 
+      operand: '',
+      toggle: '1'
+    }
+  },
+  methods: {
+    cleanHandler() {
+      this.action ='0'
+      this.operator1 =''
+      this.operator2 ='' 
+      this.operand = ''     
+    },
+    ekpInput(item) {      
+      if (item === '\u2190') {
+        this.operand = this.operand.slice(0, (this.operand.length - 1))
+      } else { 
+        this.operand += (item === '0' && this.operand === '') ? '' : item;
+      } 
+      this.toggle === '1' ? this.operator1 = this.operand : this.operator2 = this.operand        
+    }
+  },
+  watch: {
+    toggle(value){
+      this.operand = '';
+      value === '1' ? this.operator1 = '' : this.operator2 = '' 
+    }
+  },
+  computed: {
+     result() {
+      if (!(this.operator1 && this.operator2)) {        
+        return 'Введите операнды'
+      } else {
+        switch (this.action) {
+          case '+':
+            return +this.operator1 + +this.operator2; 
+          case '-':
+            return +this.operator1 - +this.operator2;
+          case '*':
+            return +this.operator1 * +this.operator2;        
+          case '/':
+            return +this.operator1 / +this.operator2;
+          case 'e':
+            return (+this.operator1) ** (+this.operator2);
+          case 'i':
+            return Math.floor(+this.operator1 / +this.operator2); 
+          default:
+            return ''
+        }
+      }
+    }
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+.input {
+    width: 400px;
+    height: 25px;
+    padding-left: 5px;
+    font-size: 16px;
 }
 </style>
